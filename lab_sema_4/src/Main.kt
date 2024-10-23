@@ -30,10 +30,14 @@ fun getMatrizDeAdyacencia(g: Grafo): Matrix {
     var A = Matrix(n,n) // el constructor por defecto inicializa en ceros
     
     for(i in 1..n){
+        // k itera por la lista de lados donde i es el vertice de inicio
         for( k in g.adyacentes(i) ){
             for(j in 1..n){
+                // j itera sobre los vertices hasta encontrar elOtroVertice del lado k que
+                //contiene a i (grafos no dirigidos) o que inicia en i (grafos dirigidos)
                 if( j == k.elOtroVertice(i) ){
-                    A[i-1,j-1] = 1.0;
+                    //Al conseguirlo se asigna 1.0 en la casilla que representa al lado i,j
+                    A[i-1,j-1] = 1.0
                 }
             }
         }
@@ -48,6 +52,7 @@ fun getMatrizDeAlcance(A: Matrix): Matrix {
     
     
     for (k in 0 until n) {
+        R[k,k] = 1.0    // Se agregan 1.0s en la diagonal principal (la matriz identidad) 
         for (i in 0 until n) {
             for (j in 0 until n) {
                 // Si no hay camino directo de i a j, pero hay un camino de i a k y de k a j, entonces hay un camino de i a j y
