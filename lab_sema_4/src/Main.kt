@@ -30,7 +30,8 @@ fun getMatrizDeAdyacencia(g: Grafo): Matrix {
     var A = Matrix(n,n) // el constructor por defecto inicializa en ceros
     
     for(i in 1..n){
-        // k itera por la lista de lados donde i es el vertice de inicio
+        // k itera por la lista de lados donde i esta contenido (grafos no dirigidos) o donde
+        // i es el vertice de inicio (grafos dirigidos)
         for( k in g.adyacentes(i) ){
             for(j in 1..n){
                 // j itera sobre los vertices hasta encontrar elOtroVertice del lado k que
