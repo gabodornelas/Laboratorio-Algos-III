@@ -88,7 +88,6 @@ fun getComponentesConexas(g: Grafo): List<List<Int>> { //Construir una lista de 
 fun BFS(g: Grafo, s: Int): List<Int> { // presente el recorrido BFS del grago g desde el nodo s
     val visitado = mutableListOf<Int>()
 
-    val recorrido = mutableListOf<Int>() // Lista del recorrido
     val Q = ArrayDeque<Int>()   // Crea una cola de enteros
     Q.add(s)    //Se agrega el vertice de inicio a la cola
     visitado.add(s)
@@ -97,9 +96,8 @@ fun BFS(g: Grafo, s: Int): List<Int> { // presente el recorrido BFS del grago g 
         // i itera sobre los vecinos del vertice que lideraba la cola
         for(i in getVecinos(g,primero)){
             if(!(i in visitado)){
-                Q.add(i)    //Se agregan los vecinos a la cola, de esta forma el los vertices se
-                            //encolan por "nivel"
-                visitado.add(i)
+                Q.add(i)        //Se agregan los vecinos a la cola, de esta forma los vertices se
+                visitado.add(i) //encolan por "nivel"
             }
         }
     }
