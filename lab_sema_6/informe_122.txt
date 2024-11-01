@@ -1,0 +1,68 @@
+INFORME I♥CATS
+	USUARIOS CON MAS AMIGOS=4
+		1:3:2:[2, 7]
+		2:5:2:[7, 13]
+		3:7:2:[3, 5]
+		4:13:2:[5, 14]
+	USUARIOS CON MENOS AMIGOS=5
+		1:1:0:[]
+		2:4:0:[]
+		3:8:0:[]
+		4:12:0:[]
+		5:15:0:[]
+	COMUNIDADES DE AMIGOS=8
+		COMUNIDAD 1
+			1:3:2:[2, 7]
+			2:5:2:[7, 13]
+			3:7:2:[3, 5]
+			4:13:2:[5, 14]
+			5:2:1:[3]
+			6:14:1:[13]
+		COMUNIDAD 2
+			1:6:1:[10]
+			2:10:1:[6]
+		COMUNIDAD 3
+			1:9:1:[11]
+			2:11:1:[9]
+		COMUNIDAD 4
+			1:1:0:[]
+		COMUNIDAD 5
+			1:4:0:[]
+		COMUNIDAD 6
+			1:8:0:[]
+		COMUNIDAD 7
+			1:12:0:[]
+		COMUNIDAD 8
+			1:15:0:[]
+	LISTA DE <<CANDIDATOS A AMIGOS>> POR USUARIO
+		USUARIO 1
+			1:2:∞
+		USUARIO 2
+			1:14:4
+			2:1:∞
+		USUARIO 3
+		USUARIO 4
+			1:11:∞
+		USUARIO 5
+			1:8:∞
+			2:9:∞
+		USUARIO 6
+			1:9:∞
+		USUARIO 7
+			1:15:∞
+		USUARIO 8
+			1:5:∞
+		USUARIO 9
+			1:5:∞
+			2:6:∞
+		USUARIO 10
+			1:11:∞
+		USUARIO 11
+			1:4:∞
+			2:10:∞
+		USUARIO 12
+		USUARIO 13
+		USUARIO 14
+			1:2:4
+		USUARIO 15
+			1:7:∞
