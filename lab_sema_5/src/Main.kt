@@ -1,3 +1,6 @@
+// Mauricio Fragachan 20-10265
+// Gabriel De Ornelas 15-10377
+
 import ve.usb.libGrafo.*
 import Jama.Matrix
 import java.io.File
