@@ -227,7 +227,7 @@ fun main(args: Array<String>) {
 
     for(i in 1..(V)){
         println("               USUARIO ${i}")
-        var alcancedecandidatos = mutableListOf<Pair<Int,Int>>() //Lista para guardar los grados
+        var alcancedecandidatos = mutableListOf<Pair<Int,Int>>() //Lista para guardar los candidatos con sus grados
         var candidatos = getVecinos(candidatos_grafo,i)
         //recorremos los candidatos
         for(j in 0 until candidatos.size){
