@@ -88,24 +88,29 @@ fun getComponentesConexas(g: Grafo): List<List<Int>> { //Construir una lista de 
     return componentes
 }
 
-fun BFS(g: Grafo, inicio: Int, ultimo: Int): List<Int> { // presenta el recorrido BFS del grafo g desde el nodo inicio
+fun BFS(g: Grafo, inicio: Int, ultimo: Int): Pair<List<Int>,List<Int>> { // presenta el recorrido BFS del grafo g desde el nodo inicio
     val visitado = mutableListOf<Int>()
+    val grados = mutableListOf<Int>()
     val cola = ArrayDeque<Int>()
+    var grado = -1  //El grado del nodo de inicio
     cola.add(inicio)
     visitado.add(inicio)
+    grados.add(grado)
     while (cola.isNotEmpty()) {
         val nodo = cola.removeFirst()
+        grado = grados[visitado.indexOf(nodo)] + 1  //El grado de los vecinos del nodo sera uno mas que el grado del nodo
         getVecinos(g,nodo)?.forEach { vecino ->
             if (vecino !in visitado) {
                 visitado.add(vecino)
                 cola.add(vecino)
+                grados.add(grado)
                 if(ultimo == vecino){
-                    return visitado
+                    return Pair(visitado,grados)
                 }
             }
         }
     }
-    return visitado
+    return Pair(visitado,grados)
 }
 
 fun main(args: Array<String>) {
@@ -222,55 +227,31 @@ fun main(args: Array<String>) {
 
     for(i in 1..(V)){
         println("               USUARIO ${i}")
-        var alcancedecandidatos = mutableListOf<String>() //Lista para guardar los grados
+        var alcancedecandidatos = mutableListOf<Pair<Int,Int>>() //Lista para guardar los grados
         var candidatos = getVecinos(candidatos_grafo,i)
         //recorremos los candidatos
         for(j in 0 until candidatos.size){
-            var grado = 0
-            var caminos = BFS(amigos_grafo,i,candidatos[j]) //caminos en BFS desde i hasta el candidato[j]
+            val caminosygrados = BFS(amigos_grafo,i,candidatos[j])
+            val caminos = caminosygrados.first //caminos en BFS desde i hasta el candidato[j]
+            val grados = caminosygrados.second //los grados de cada vertice en caminos
             if(candidatos[j] in caminos){
-                var k = caminos.size-1          //sabemos que el ultimo elemento de caminos es nuestro candidato[j]
-                while(k > 0){
-                    //buscaremos el grado de separacion entre candidato[j] e i
-                    var nivel = getVecinos(amigos_grafo,caminos[k])
-                    //iteramos sobre los los elementos en caminos
-                    var w = 0
-                    while(w < k){
-                        if(caminos[w] in nivel){    //Si caminos[w] es vecino de caminos[k]
-                            if(caminos[w] == i){  //encontramos al i de inicio, en este caso w es igual a 0
-                                alcancedecandidatos.add(grado.toString())
-                                k = w
-                            }else{
-                                //caminos[w] es el elemento mas a la izquierda en caminos que es vecino de k y no es i
-                                //Por lo tanto su grado aumenta
-                                grado++
-                            }
-                            //caminos[w] es el elemento mas a la izquierda en caminos que es vecino de k
-                            k = w
-                        }else{
-                            w++     //Pasamos al siguiente elemento en caminos
-                        }
-                    }
-                }
+                alcancedecandidatos.add(Pair(candidatos[j],grados[caminos.indexOf(candidatos[j])]))
             }else{//si el candidato no esta en el camino, significa que no es alcanzable
-                alcancedecandidatos.add("∞")
+                alcancedecandidatos.add(Pair(candidatos[j],V))
+                //Se le asigna V como grado ya que este es un grado imposible (infinito), pero facil de detectar para imprimir
             }
         }
+        //Ordenamos la lista de pares por su segundo atributo, el de los grados
+        var alcancesordenados = alcancedecandidatos.sortedBy { it.second }
         contador = 0
-        for(j in 0..V){     //El rango es hasta V porque seria el maximo grado de separacion
-            for(k in 0 until candidatos.size){  //Iteramos sobre los candidatos
-                if(alcancedecandidatos[k] == j.toString()){
-                    contador++      
-                    println("                   $contador:${candidatos[k]}:${alcancedecandidatos[k]}")
-                    //Imprimimos por orden de grado (j) y de id del usuario (k)
-                }
+        //Iteramos sobre alcancesordenados
+        for(j in alcancesordenados){
+            contador++
+            if(j.second == V){
+                println("                   $contador:${j.first}:∞")
             }
-        }
-        //Repetimos la iteracion sobre los candidatos para imprimir aquellos que no eran alcanzables
-        for(k in 0 until candidatos.size){
-            if(alcancedecandidatos[k] == "∞"){
-                contador++
-                println("                   $contador:${candidatos[k]}:${alcancedecandidatos[k]}")
+            else{
+                println("                   $contador:${j.first}:${ j.second }")
             }
         }
     }
