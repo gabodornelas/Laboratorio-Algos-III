@@ -225,7 +225,7 @@ fun main(args: Array<String>) {
         //Ordenamos la lista de pares por su segundo atributo, el de los grados
         var alcances_ordenados = alcance_de_candidatos.sortedBy { it.second }
         contador = 0
-        //Iteramos sobre alcancesordenados
+        //Iteramos sobre alcances_ordenados
         for(j in alcances_ordenados){
             contador++
             if(j.second == V){
