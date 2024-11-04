@@ -170,7 +170,7 @@ fun main(args: Array<String>) {
     */
     println("INFORME I♥CATS")
     println("       USUARIOS CON MAS AMIGOS=$max_quantity")
-    var contador = 0    
+    var contador = 0
     for(i in 0..(V-1))  {
         if(amigos_per_vertice[i] == max){
             contador++
@@ -185,41 +185,22 @@ fun main(args: Array<String>) {
             println("       $contador:${i+1}:${amigos_per_vertice[i]}:${getVecinos(amigos_grafo,i+1)}")
         }
     }
+    
     println("       COMUNIDADES DE AMIGOS=${amigos_componentes_conexas.size}")
     
     for (i in 0 until amigos_componentes_conexas.size) {
-        var comunidades = mutableListOf<List<Int>>()
-        for (j in 0 until amigos_componentes_conexas[i].size) {
-            comunidades.add(getVecinos(amigos_grafo,amigos_componentes_conexas[i][j]))
+        var comunidades = mutableListOf<Pair<Int, List<Int>>>() //Lista de usuario con su lista de amigos
+        for (j in amigos_componentes_conexas[i]) {
+            comunidades.add(Pair(j,getVecinos(amigos_grafo,j)))
         }
 
-        var comunidades_ordenadas = comunidades.sortedByDescending { it.size }
+        var comunidades_ordenadas = comunidades.sortedByDescending { it.second.size }
 
         println("               COMUNIDAD ${i+1}")
-        var k = 0
-        var maximo = max
-        //k itera sobre los elementos de la componente conexa i, hasta encontrar el que tenga la mayor cantidad de
-        //"amigos", se asume que la mayor cantidad es maximo, el cual disminuye si se recorrio toda la componente y
-        //no se encontraron mas vertices con esa cantidad de "amigos", en ese caso k se inicializa en 0
-        for(j in 0 until amigos_componentes_conexas[i].size){           
-            while( k <= amigos_componentes_conexas[i].size ) {
-                if(k <= amigos_componentes_conexas[i].size-1){
-                    if(comunidades[k].size == maximo){  //el elemento k de 'comunidades' esta dentro del rango y tiene 'maximo' "amigos"
-                        break
-                    }else if(k < amigos_componentes_conexas[i].size-1){
-                        k++
-                    }else{  //se llego al limite del rango, reinicia el ciclo disminuyendo maximo
-                        k=0
-                        maximo = maximo?.dec()
-                    }
-                }else{  //se sobrepaso el limite del rango, reinicia el ciclo disminuyendo maximo
-                    k=0
-                    maximo = maximo?.dec()
-                }
-            }
-            
-            println("                   ${j+1}:${amigos_componentes_conexas[i][k]}:${comunidades[k].size}:${comunidades[k]}")
-            k++  //en el siguiente ciclo buscamos la siguiente k con 'maximo' "amigos"
+        contador = 0
+        for(j in comunidades_ordenadas){
+            contador++
+            println("                   $contador:${j.first}:${j.second.size}:${j.second}")
         }
     }
 
@@ -227,25 +208,25 @@ fun main(args: Array<String>) {
 
     for(i in 1..(V)){
         println("               USUARIO ${i}")
-        var alcancedecandidatos = mutableListOf<Pair<Int,Int>>() //Lista para guardar los candidatos con sus grados
+        var alcance_de_candidatos = mutableListOf<Pair<Int,Int>>() //Lista para guardar los candidatos con sus grados
         var candidatos = getVecinos(candidatos_grafo,i)
         //recorremos los candidatos
         for(j in candidatos){
-            val caminosygrados = BFS(amigos_grafo,i,j)
-            val caminos = caminosygrados.first //caminos en BFS desde i hasta el candidato[j]
-            val grados = caminosygrados.second //los grados de cada vertice en caminos
+            val caminos_y_grados = BFS(amigos_grafo,i,j)
+            val caminos = caminos_y_grados.first //caminos en BFS desde i hasta el candidato[j]
+            val grados = caminos_y_grados.second //los grados de cada vertice en caminos
             if(j in caminos){
-                alcancedecandidatos.add(Pair(j,grados[caminos.indexOf(j)]))
+                alcance_de_candidatos.add(Pair(j,grados[caminos.indexOf(j)]))
             }else{//si el candidato no esta en el camino, significa que no es alcanzable
-                alcancedecandidatos.add(Pair(j,V))
+                alcance_de_candidatos.add(Pair(j,V))
                 //Se le asigna V como grado ya que este es un grado imposible (infinito), pero facil de detectar para imprimir
             }
         }
         //Ordenamos la lista de pares por su segundo atributo, el de los grados
-        var alcancesordenados = alcancedecandidatos.sortedBy { it.second }
+        var alcances_ordenados = alcance_de_candidatos.sortedBy { it.second }
         contador = 0
         //Iteramos sobre alcancesordenados
-        for(j in alcancesordenados){
+        for(j in alcances_ordenados){
             contador++
             if(j.second == V){
                 println("                   $contador:${j.first}:∞")
