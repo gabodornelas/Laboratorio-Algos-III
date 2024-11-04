@@ -230,14 +230,14 @@ fun main(args: Array<String>) {
         var alcancedecandidatos = mutableListOf<Pair<Int,Int>>() //Lista para guardar los candidatos con sus grados
         var candidatos = getVecinos(candidatos_grafo,i)
         //recorremos los candidatos
-        for(j in 0 until candidatos.size){
-            val caminosygrados = BFS(amigos_grafo,i,candidatos[j])
+        for(j in candidatos){
+            val caminosygrados = BFS(amigos_grafo,i,j)
             val caminos = caminosygrados.first //caminos en BFS desde i hasta el candidato[j]
             val grados = caminosygrados.second //los grados de cada vertice en caminos
-            if(candidatos[j] in caminos){
-                alcancedecandidatos.add(Pair(candidatos[j],grados[caminos.indexOf(candidatos[j])]))
+            if(j in caminos){
+                alcancedecandidatos.add(Pair(j,grados[caminos.indexOf(j)]))
             }else{//si el candidato no esta en el camino, significa que no es alcanzable
-                alcancedecandidatos.add(Pair(candidatos[j],V))
+                alcancedecandidatos.add(Pair(j,V))
                 //Se le asigna V como grado ya que este es un grado imposible (infinito), pero facil de detectar para imprimir
             }
         }
