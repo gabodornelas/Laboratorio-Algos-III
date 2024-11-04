@@ -1,3 +1,6 @@
+// Mauricio Fragachan 20-10265
+// Gabriel De Ornelas 15-10377
+
 import ve.usb.libGrafo.*
 import Jama.Matrix
 import java.io.File
@@ -20,10 +23,10 @@ fun getGrafo(rutaArchivo: String): Grafo? { // para leer el grafo de un archivo.
         // feedback
         val V = instancia.obtenerNumeroDeVertices()
         val E = instancia.obtenerNumeroDeLados()
-        for(i in 1..V)  println("${File(rutaArchivo).name} GrafoNoDirigido V=$V E=$E $i:${getVecinos(instancia,i)}")
+        //for(i in 1..V)  println("${File(rutaArchivo).name} GrafoNoDirigido V=$V E=$E $i:${getVecinos(instancia,i)}")
         instancia
     } catch (e: Exception) {
-        println("Error al instanciar la clase: ${e.message}")
+        //println("Error al instanciar la clase: ${e.message}")
         null
     }
 
@@ -62,7 +65,7 @@ fun getComponentesConexas(g: Grafo): List<List<Int>> { //Construir una lista de 
     val n = g.obtenerNumeroDeVertices()
     val A = getMatrizDeAdyacencia(g) // construir la matriz de adyacencia (A)
     val R = getMatrizDeAlcance(A) // construir la matriz de alcance (R)
-    print("\nMatriz de adyacencia (A) $n x $n"); A.print(0,0); print("\nMatriz de alcance (R) $n x $n"); R.print(0,0) // feedback
+    //print("\nMatriz de adyacencia (A) $n x $n"); A.print(0,0); print("\nMatriz de alcance (R) $n x $n"); R.print(0,0) // feedback
     // Utilizar la matriz C (copia de R) para extraer las componentes conexas
     val C = R.copy()
     val esNoDirigido = g is GrafoNoDirigido || g is GrafoNoDirigidoCosto
@@ -85,6 +88,25 @@ fun getComponentesConexas(g: Grafo): List<List<Int>> { //Construir una lista de 
     return componentes
 }
 
+fun BFS(g: Grafo, inicio: Int, ultimo: Int): List<Int> { // presenta el recorrido BFS del grafo g desde el nodo inicio
+    val visitado = mutableListOf<Int>()
+    val cola = ArrayDeque<Int>()
+    cola.add(inicio)
+    visitado.add(inicio)
+    while (cola.isNotEmpty()) {
+        val nodo = cola.removeFirst()
+        getVecinos(g,nodo)?.forEach { vecino ->
+            if (vecino !in visitado) {
+                visitado.add(vecino)
+                cola.add(vecino)
+                if(ultimo == vecino){
+                    return visitado
+                }
+            }
+        }
+    }
+    return visitado
+}
 
 fun main(args: Array<String>) {
     fun seleccionaArchivoTxt(prompt:String): String?{
@@ -113,7 +135,7 @@ fun main(args: Array<String>) {
     if(amigos_txt == null) exitProcess(1)
     val candidatos_txt = seleccionaArchivoTxt("Seleccionar archivo de candidatos.txt")
     if(candidatos_txt == null) exitProcess(1)
-
+//A PARTIR DE AQUI
     var amigos_grafo = getGrafo(amigos_txt) as Grafo
     val V = amigos_grafo.obtenerNumeroDeVertices()
     var amigos_per_vertice = mutableListOf<Int>()
@@ -131,12 +153,9 @@ fun main(args: Array<String>) {
     var max_quantity = amigos_per_vertice.count{it == max}
     var min_quantity = amigos_per_vertice.count{it == min}
 
-    
-    var candidatos_grafo = getGrafo(candidatos_txt)
+    var candidatos_grafo = getGrafo(candidatos_txt) as Grafo
 
-
-
-    println("amigos=$amigos_txt\ncandidatos=$candidatos_txt")
+    //println("amigos=$amigos_txt\ncandidatos=$candidatos_txt")
     /*
     *********************************************************************************
     *********************************************************************************
@@ -150,7 +169,7 @@ fun main(args: Array<String>) {
     for(i in 0..(V-1))  {
         if(amigos_per_vertice[i] == max){
             contador++
-            println("       $contador:${i+1}:${amigos_per_vertice[i]}: ${getVecinos(amigos_grafo,i+1)}")
+            println("       $contador:${i+1}:${amigos_per_vertice[i]}:${getVecinos(amigos_grafo,i+1)}")
         }
     }
     println("       USUARIOS CON MENOS AMIGOS=$min_quantity")
@@ -158,7 +177,7 @@ fun main(args: Array<String>) {
     for(i in 0..(V-1))  {
         if(amigos_per_vertice[i] == min){
             contador++
-            println("       $contador:${i+1}:${amigos_per_vertice[i]}: ${getVecinos(amigos_grafo,i+1)}")
+            println("       $contador:${i+1}:${amigos_per_vertice[i]}:${getVecinos(amigos_grafo,i+1)}")
         }
     }
     println("       COMUNIDADES DE AMIGOS=${amigos_componentes_conexas.size}")
@@ -172,11 +191,87 @@ fun main(args: Array<String>) {
         var comunidades_ordenadas = comunidades.sortedByDescending { it.size }
 
         println("               COMUNIDAD ${i+1}")
-        contador = 0
+        var k = 0
+        var maximo = max
+        //k itera sobre los elementos de la componente conexa i, hasta encontrar el que tenga la mayor cantidad de
+        //"amigos", se asume que la mayor cantidad es maximo, el cual disminuye si se recorrio toda la componente y
+        //no se encontraron mas vertices con esa cantidad de "amigos", en ese caso k se inicializa en 0
+        for(j in 0 until amigos_componentes_conexas[i].size){           
+            while( k <= amigos_componentes_conexas[i].size ) {
+                if(k <= amigos_componentes_conexas[i].size-1){
+                    if(comunidades[k].size == maximo){  //el elemento k de 'comunidades' esta dentro del rango y tiene 'maximo' "amigos"
+                        break
+                    }else if(k < amigos_componentes_conexas[i].size-1){
+                        k++
+                    }else{  //se llego al limite del rango, reinicia el ciclo disminuyendo maximo
+                        k=0
+                        maximo = maximo?.dec()
+                    }
+                }else{  //se sobrepaso el limite del rango, reinicia el ciclo disminuyendo maximo
+                    k=0
+                    maximo = maximo?.dec()
+                }
+            }
+            
+            println("                   ${j+1}:${amigos_componentes_conexas[i][k]}:${comunidades[k].size}:${comunidades[k]}")
+            k++  //en el siguiente ciclo buscamos la siguiente k con 'maximo' "amigos"
+        }
+    }
 
-        for (j in 0 until amigos_componentes_conexas[i].size) {
-            contador++
-            println("                   $contador:${amigos_componentes_conexas[i][j]}:${getVecinos(amigos_grafo,amigos_componentes_conexas[i][j]).size}: ${comunidades_ordenadas[j]}")
+    println("	LISTA DE <<CANDIDATOS A AMIGOS>> POR USUARIO")
+
+    for(i in 1..(V)){
+        println("               USUARIO ${i}")
+        var alcancedecandidatos = mutableListOf<String>() //Lista para guardar los grados
+        var candidatos = getVecinos(candidatos_grafo,i)
+        //recorremos los candidatos
+        for(j in 0 until candidatos.size){
+            var grado = 0
+            var caminos = BFS(amigos_grafo,i,candidatos[j]) //caminos en BFS desde i hasta el candidato[j]
+            if(candidatos[j] in caminos){
+                var k = caminos.size-1          //sabemos que el ultimo elemento de caminos es nuestro candidato[j]
+                while(k > 0){
+                    //buscaremos el grado de separacion entre candidato[j] e i
+                    var nivel = getVecinos(amigos_grafo,caminos[k])
+                    //iteramos sobre los los elementos en caminos
+                    var w = 0
+                    while(w < k){
+                        if(caminos[w] in nivel){    //Si caminos[w] es vecino de caminos[k]
+                            if(caminos[w] == i){  //encontramos al i de inicio, en este caso w es igual a 0
+                                alcancedecandidatos.add(grado.toString())
+                                k = w
+                            }else{
+                                //caminos[w] es el elemento mas a la izquierda en caminos que es vecino de k y no es i
+                                //Por lo tanto su grado aumenta
+                                grado++
+                            }
+                            //caminos[w] es el elemento mas a la izquierda en caminos que es vecino de k
+                            k = w
+                        }else{
+                            w++     //Pasamos al siguiente elemento en caminos
+                        }
+                    }
+                }
+            }else{//si el candidato no esta en el camino, significa que no es alcanzable
+                alcancedecandidatos.add("∞")
+            }
+        }
+        contador = 0
+        for(j in 0..V){     //El rango es hasta V porque seria el maximo grado de separacion
+            for(k in 0 until candidatos.size){  //Iteramos sobre los candidatos
+                if(alcancedecandidatos[k] == j.toString()){
+                    contador++      
+                    println("                   $contador:${candidatos[k]}:${alcancedecandidatos[k]}")
+                    //Imprimimos por orden de grado (j) y de id del usuario (k)
+                }
+            }
+        }
+        //Repetimos la iteracion sobre los candidatos para imprimir aquellos que no eran alcanzables
+        for(k in 0 until candidatos.size){
+            if(alcancedecandidatos[k] == "∞"){
+                contador++
+                println("                   $contador:${candidatos[k]}:${alcancedecandidatos[k]}")
+            }
         }
     }
 
