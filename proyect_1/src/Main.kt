@@ -213,7 +213,7 @@ fun main(args: Array<String>) {
         //recorremos los candidatos
         for(j in candidatos){
             val caminos_y_grados = BFS(amigos_grafo,i,j)
-            val caminos = caminos_y_grados.first //caminos en BFS desde i hasta el candidato[j]
+            val caminos = caminos_y_grados.first //caminos en BFS desde i hasta el candidato j
             val grados = caminos_y_grados.second //los grados de cada vertice en caminos
             if(j in caminos){
                 alcance_de_candidatos.add(Pair(j,grados[caminos.indexOf(j)]))
