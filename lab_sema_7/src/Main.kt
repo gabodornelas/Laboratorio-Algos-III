@@ -45,14 +45,16 @@ fun getMSTbyPrim(g: GrafoNoDirigidoCosto): List<Pair<List<Int>, List<Triple<Int,
 	val V = g.obtenerNumeroDeVertices()
 	for(i in 1..V){
 		if(i !in lista_vertice){
+			//Se inicializa la componente conexa de aqui
 			lista_vertice.clear()
 			lista_adyacente.clear()
 			cola_vertice.add(i)
 			var adyacentes = g.adyacentes(i)
 			for(j in adyacentes){
 				cola_adyacente.add(Triple(j.a,j.b,j.costo))
-			}		
-			while(cola_adyacente.isNotEmpty()){
+			}
+			//Hasta aqui
+			while(cola_adyacente.isNotEmpty()){	//Dentro del ciclo while se llena el resto de la componente
 				var primero = cola_adyacente.poll()
 				if(primero.first !in cola_vertice){	
 					lista_adyacente.add(primero)				
@@ -80,7 +82,9 @@ fun getMSTbyPrim(g: GrafoNoDirigidoCosto): List<Pair<List<Int>, List<Triple<Int,
 			}
 			val par = Pair(lista_vertice,lista_adyacente)
 			m.add(par)
-			println(m)
+			println(m)	//Te daras cuenta que cuando agrega la segunda lista de m,
+					//la agrega tanto a la primera como a la segunda, sobreescribe
+					//la primera, aun no entiendo por que lo hace
 		}
 	}
 	println("m final $m")
