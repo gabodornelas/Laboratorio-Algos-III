@@ -1,0 +1,44 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "libGrafo",
+            "type": "shell",
+            "command": "cmd.exe",
+            "args": [
+                "/c",
+                "libGrafo.cmd"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "MainCompile+Execute",
+            "type": "shell",
+            "command": "cmd.exe",
+            "args": [
+                "/c",
+                "MainCompile+Execute.cmd"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "MainOnlyExecute",
+            "type": "shell",
+            "command": "cmd.exe",
+            "args": [
+                "/c",
+                "MainOnlyExecute.cmd"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

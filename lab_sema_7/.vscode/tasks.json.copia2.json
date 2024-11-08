@@ -1,0 +1,58 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "libGrafo",
+            "type": "shell",
+            "command": "cmd.exe",
+            "args": [
+                "/c",
+                "kotlinc -d . ve/usb/libGrafo/Arco.kt ve/usb/libGrafo/ArcoCosto.kt ve/usb/libGrafo/Arista.kt ve/usb/libGrafo/AristaCosto.kt ve/usb/libGrafo/Grafo.kt ve/usb/libGrafo/GrafoDirigido.kt ve/usb/libGrafo/GrafoDirigidoCosto.kt ve/usb/libGrafo/GrafoNoDirigido.kt ve/usb/libGrafo/GrafoNoDirigidoCosto.kt ve/usb/libGrafo/Lado.kt && jar cf libs/libGrafo.jar -C . ."
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Compilar Main",
+            "type": "shell",
+            "command": "kotlinc",
+            "args": [
+                "-d", "bin",
+                "-cp" , "\"libs/Jama.jar;libs/libGrafo.jar\"",
+                "src/Main.kt"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": ["/c"]
+                }
+            }
+        },
+        {
+            "label": "Ejecutar Main",
+            "type": "shell",
+            "command": "kotlin",
+            "args": [
+                "-cp", "\"bin;libs/Jama.jar;libs/libGrafo.jar\"",
+                "MainKt"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": ["/c"]
+                }
+            },
+            "dependsOn": "Compilar Main"
+        }
+    ]
+}
