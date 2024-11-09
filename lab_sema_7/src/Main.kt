@@ -38,50 +38,42 @@ fun seleccionaArchivoTxt(prompt:String):String?{
 fun getMSTbyPrim(g: GrafoNoDirigidoCosto): List<Pair<List<Int>, List<Triple<Int, Int, Double>>>> {
 	val m: MutableList<Pair<List<Int>, List<Triple<Int, Int, Double>>>> = mutableListOf()
 	//iniciar, seleccionar arista, actualizar
-	var cola_adyacente = PriorityQueue<Triple<Int,Int,Double>>(compareBy {it.third})
-	var lista_adyacente: MutableList<Triple<Int,Int,Double>> = mutableListOf()
-	var cola_vertice = PriorityQueue<Int>()
+	var cola_arista = PriorityQueue<Triple<Int,Int,Double>>(compareBy {it.third}) // la cola se ordena por costo
+	var lista_arista: MutableList<Triple<Int,Int,Double>> = mutableListOf()
 	var lista_vertice: MutableList<Int> = mutableListOf()
 	val V = g.obtenerNumeroDeVertices()
+	var nuevo_vertice = 0
 	for(i in 1..V){
 		if(i !in lista_vertice){
-			//Se inicializa la componente conexa de aqui
 			lista_vertice.clear()
-			lista_adyacente.clear()
-			cola_vertice.add(i)
-			var adyacentes = g.adyacentes(i)
-			for(j in adyacentes){
-				cola_adyacente.add(Triple(j.a,j.b,j.costo))
-			}
-			//Hasta aqui
-			while(cola_adyacente.isNotEmpty()){	//Dentro del ciclo while se llena el resto de la componente
-				var primero = cola_adyacente.poll()
-				if(primero.first !in cola_vertice){	
-					lista_adyacente.add(primero)				
-					adyacentes = g.adyacentes(primero.first)
-					for(j in adyacentes){
-						if(j.a !in cola_vertice && j.b !in cola_vertice){
-							cola_adyacente.add(Triple(j.a,j.b,j.costo))
+			lista_arista.clear()
+			lista_vertice.add(i)	//Primer vertice de la componente conexa
+			var aristas = g.adyacentes(i)
+			for(j in aristas){	//Inicializamos la cola con aristas que inciden en i
+				cola_arista.add(Triple(j.a,j.b,j.costo))
+			}		
+			while(cola_arista.isNotEmpty()){	//Al finalizar el bucle while tenderemos la componente conexa formada
+				var primero = cola_arista.poll()	//primero es la arista de menor costo en la cola
+				if(primero.first !in lista_vertice || primero.second !in lista_vertice){	
+					lista_arista.add(primero)
+					if(primero.first !in lista_vertice){
+						aristas = g.adyacentes(primero.first)
+						nuevo_vertice = primero.first
+					}else{
+						aristas = g.adyacentes(primero.second)
+						nuevo_vertice = primero.second
+					}
+					for(j in aristas){
+						if(j.a !in lista_vertice && j.b !in lista_vertice){
+							cola_arista.add(Triple(j.a,j.b,j.costo))
 						}
 					}
-					cola_vertice.add(primero.first)
-				}
-				if(primero.second !in cola_vertice){
-					lista_adyacente.add(primero)				
-					adyacentes = g.adyacentes(primero.second)
-					for(j in adyacentes){
-						if(j.a !in cola_vertice && j.b !in cola_vertice){
-							cola_adyacente.add(Triple(j.a,j.b,j.costo))
-						}
-					}
-					cola_vertice.add(primero.second)
+					//Agregamos el vertice a la lista luego de agregar las aristas que inciden en él a la cola_arista
+					lista_vertice.add(nuevo_vertice)
 				}
 			}
-			while(cola_vertice.isNotEmpty()){
-				lista_vertice.add(cola_vertice.poll())
-			}
-			val par = Pair(lista_vertice.toList(),lista_adyacente.toList())
-			m.add(par)
+			var lista_ver = lista_vertice.sortedBy{ it }	//ordenamos la lista de vertices
+			m.add(Pair(lista_ver,lista_arista.toList()))
 		}
 	}
 	return m
