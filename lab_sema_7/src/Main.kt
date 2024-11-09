@@ -37,7 +37,6 @@ fun seleccionaArchivoTxt(prompt:String):String?{
 
 fun getMSTbyPrim(g: GrafoNoDirigidoCosto): List<Pair<List<Int>, List<Triple<Int, Int, Double>>>> {
 	val m: MutableList<Pair<List<Int>, List<Triple<Int, Int, Double>>>> = mutableListOf()
-	//iniciar, seleccionar arista, actualizar
 	var cola_arista = PriorityQueue<Triple<Int,Int,Double>>(compareBy {it.third}) // la cola se ordena por costo
 	var lista_arista: MutableList<Triple<Int,Int,Double>> = mutableListOf()
 	var lista_vertice: MutableList<Int> = mutableListOf()
