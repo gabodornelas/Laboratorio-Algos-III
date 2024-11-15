@@ -74,20 +74,19 @@ class Graph {
     }
     fun mstKruskal(): List<Edge> {     // Kruskal
         val mst = mutableListOf<Edge>()
-        val pq = PriorityQueue<Edge>(compareBy{it.w})
-        val et = mutableListOf<Int>()
+        val pq = PriorityQueue<Edge>(compareBy{it.w})    //Cola de prioridad ordenada por costo menor
+        val et = mutableListOf<Int>()    //Lista de etiequetas de las componentes conexas a las que pertenecen los vertices
         pq.addAll(getEdges())
-        for(i in 0 until V){    et.add(i)   }
+        for(i in 0 until V){    et.add(i)   }    //Las etiequetas se inicializan con el unico vertice que compone la componente
         while (pq.isNotEmpty()) {
-            if(et.all{it==et[0]}){  break   }
-            val edge = pq.poll();   var valmay = V;     var valmen = 0;
+            if(et.all{it==et[0]}){  break   }    //Si todos los vertices tienen la misma etiqueta, no reviso mas
+            val edge = pq.poll();   var valmay = V;     var valmen = 0;    //edge es la arista de menor costo actual. valmay y valmen son el valor de la etiqueta mayor/menor
             if (et[edge.v] != et[edge.u]) {
-                mst.add(edge)
-                if(et[edge.v] > et[edge.u]){    valmay = et[edge.v];    valmen = et[edge.u];
-                }else{  valmay = et[edge.u];    valmen = et[edge.v];
-                }
-                for(i in 0 until V){
-                    if(et[i] == valmay){    et[i] = valmen}
+                mst.add(edge)    //Agrego la arista porque 'u' y 'v' pertenecen a componentes conexas distintas
+                if(et[edge.v] > et[edge.u]){    valmay = et[edge.v];    valmen = et[edge.u];}    //Asigno valores a valmay y valmen
+                else{  valmay = et[edge.u];    valmen = et[edge.v];}                            //segun sea el caso
+                for(i in 0 until V){    //Recorro la lista de etiquetas
+                    if(et[i] == valmay){    et[i] = valmen}    //Asigno la etiqueta valmen a los vertices que tengan la etiqueta valmay
                 }
             }
         }    
