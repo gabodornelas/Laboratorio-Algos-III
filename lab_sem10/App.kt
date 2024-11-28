@@ -1,4 +1,5 @@
-
+//Mauricio Fragachan 20-10265
+//Gabriel De Ornelas 15-10377
 
 package org.example // generado por Gradle como parte del esqueleto inicial
 import java.io.File
