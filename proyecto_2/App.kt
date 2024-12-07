@@ -544,40 +544,24 @@ class TspToolBox {
                 var valprox = Lista_De_Fitness.indexOfFirst{it > num_random}  //El indice del primer elemento en la lista que es mayor al numero random
                 Lista_De_Individuos.add(valprox) // Es el mismo indice para popRanked
             }
-            /*
-            COLOQUE SU CÓDIGO AQUÍ, POR LOS MOMENTOS PONGO UN CÓDIGO
-            QUE LO QUE HACE ES GENERAR CANDIDATOS ALEATORIOS
-            */
             //return MutableList(2 * popRanked.size) { Random.nextInt(tspTest.n) }
             return Lista_De_Individuos
         }
 
         fun breed(padre: Individuo, madre: Individuo): Individuo {
             var pt_corte1 = Random.nextInt(padre.tour.size-1) //El primer pto de corte no puede estar en la posicion final
-            var pt_corte2 = Random.nextInt(pt_corte1+1,padre.tour.size+1) //El segundo pto de corte tiene que estar delante del primero
-            val hijo = padre    //Se copia todo lo del padre en el hijo
-            val Lista_provisional = mutableListOf<Int>()
-            //En lista provisional estan los elementos del padre entre los ptos de corte
-            for(j in pt_corte1 until pt_corte2){
-                Lista_provisional.add(padre.tour[j])
+            var pt_corte2 = Random.nextInt(pt_corte1+1,padre.tour.size) //El segundo pto de corte no puede estar detras del primero
+            var son = mutableListOf<Int>()     
+            for(i in madre.tour){   //Se copia el tour de la madre en el hijo
+                son.add(i)
             }
-            for(i in 0 until padre.tour.size){
-                if(madre.tour[i] !in Lista_provisional){    //Se agregan los elementos de madre que no esten entre los ptos de corte en el padre
-                    if( (i < pt_corte1) || (i >= pt_corte2)){
-                        hijo.tour[i] = madre.tour[i]    //Se agrega en la posicion i de hijo el elemento i de madre               
-                    }else{
-                        if(i + Lista_provisional.size < hijo.tour.size){
-                            //Se corre (Lista_provisional.size) posiciones el elemento i de la madre para agregarlo en hijo
-                            hijo.tour[i+Lista_provisional.size] = madre.tour[i]
-                        }
-                    }
-                }
-            }
-            /*
-            COLOQUE SU CÓDIGO AQUÍ, POR LOS MOMENTOS PONGO UN CÓDIGO
-            QUE LO QUE HACE ES SELECCIONAR ALEATORIAMENTE AL PADRE O LA MADRE
-            */
+            for(j in pt_corte1 until pt_corte2){   
+                son.remove(padre.tour[j])       //Se eliminan en el hijo los elementos del padre entre los ptos de corte
+                son.add(j,padre.tour[j])        //Se agregan en el hijo esos elementos pero en la posicion correcta
+            }                                    //Antes tenian la posicion de la madre, por eso se eliminan primero
             //return if (Random.nextDouble() < 0.5) padre else madre
+            val hijo = Individuo(tspTest, true) //Se crea el individuo nuevo
+            hijo.tour = son //Su tour es el que acabamos de armar
             return hijo
         }
 
@@ -592,9 +576,6 @@ class TspToolBox {
             var temp = individual.tour[pos1]
             individual.tour[pos1] = individual.tour[pos2]
             individual.tour[pos2] = temp
-            /*
-            COLOQUE SU CÓDIGO AQUÍ
-            */
             return individual
         }
 
